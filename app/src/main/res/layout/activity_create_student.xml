@@ -1,0 +1,85 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/NewClass_ScrollView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:scrollbars="vertical">
+    <LinearLayout android:layout_width="fill_parent"
+        android:orientation="vertical"
+        android:layout_height="fill_parent">
+        <LinearLayout android:layout_width="fill_parent"
+            android:orientation="horizontal"
+            android:layout_height="fill_parent">
+
+            <TextView
+                android:id="@+id/student_id_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/student_id_label"
+                android:textSize="10pt">
+            </TextView>
+            <EditText
+                android:id="@+id/student_id_edittext"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_student_id"
+                android:inputType="text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:orientation="horizontal"
+            android:layout_height="fill_parent">
+            <TextView
+                android:id="@+id/roll_no_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/student_roll_no_label"
+                android:textSize="10pt">
+            </TextView>
+            <EditText
+                android:id="@+id/roll_no_edittext"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_roll_no"
+                android:inputType="text" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:orientation="horizontal"
+            android:layout_height="fill_parent">
+            <TextView
+                android:id="@+id/student_name_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/student_name_label"
+                android:textSize="10pt">
+            </TextView>
+            <EditText
+                android:id="@+id/student_name_edittext"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_student_name"
+                android:inputType="text" />
+        </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="match_parent">
+        <Button
+            android:id="@+id/ButtonSaveStudent"
+            android:layout_height="match_parent"
+            android:text="@string/button_new_student_save"
+            android:onClick="saveStudent"
+            android:layout_width="match_parent">
+        </Button>
+        <Button
+            android:id="@+id/ButtonCancelStudent"
+            android:layout_height="match_parent"
+            android:text="@string/button_new_student_cancel"
+            android:onClick="cancelStudent"
+            android:layout_width="fill_parent">
+        </Button>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
