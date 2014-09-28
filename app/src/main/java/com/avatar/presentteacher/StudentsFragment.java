@@ -15,12 +15,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.avatar.presentteacher.data.AttendanceContract;
-import com.avatar.presentteacher.data.AttendanceContract.StudentEntry;
 import com.avatar.presentteacher.data.AttendanceContract.ClassEntry;
+import com.avatar.presentteacher.data.AttendanceContract.StudentEntry;
+import com.avatar.presentteacher.data.AttendanceContract.AttendanceEntry;
 
 
 /**
@@ -34,6 +36,7 @@ public class StudentsFragment extends android.support.v4.app.Fragment implements
 
     private static final String LOG_TAG = StudentsFragment.class.getSimpleName();
     private static final int STUDENTS_LOADER = 0;
+    private static final int ATTENDANCE_LOADER = 1;
 
     private static final String[] STUDENTS_COLUMNS = {
             StudentEntry.TABLE_NAME + "." + AttendanceContract.StudentEntry._ID,
@@ -43,7 +46,15 @@ public class StudentsFragment extends android.support.v4.app.Fragment implements
             ClassEntry.COLUMN_CLASS_NAME
     };
 
-    // These indices are tied to STUDENT_COLUMNS.  If CLASS_COLUMNS changes, these
+    private static final String[] ATTENDANCE_COLUMNS = {
+            AttendanceEntry.TABLE_NAME + "." + AttendanceEntry._ID,
+            AttendanceEntry.COLUMN_DATETEXT,
+            AttendanceEntry.COLUMN_CLASS_KEY,
+            AttendanceEntry.COLUMN_STU_KEY,
+            AttendanceEntry.COLUMN_ATTENDANCE
+    };
+
+    // These indices are tied to STUDENT_COLUMNS.  If STUDENT_COLUMNS changes, these
     // must change.
     public static final int COL_STUDENT_PK_ID = 0;
     public static final int COL_STUDENT_ID = 1;
@@ -55,14 +66,16 @@ public class StudentsFragment extends android.support.v4.app.Fragment implements
     private TextView mStudentRollNoView;
     private TextView mStudentNameView;
     private String mClassIdStr;
+    private String mDate;
     private ListView mListView;
+    private DatePicker datePicker;
     private int mPosition = ListView.INVALID_POSITION;
     private static final String SELECTED_KEY = "selected_position";
 
 
     public StudentsFragment() {
         // Required empty public constructor
-    }
+            }
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -73,7 +86,7 @@ public class StudentsFragment extends android.support.v4.app.Fragment implements
         /**
          * ClassFragmentCallback for when an item has been selected.
          */
-        public void onItemSelected(String classSelected);
+        public void onItemSelected(String studentSelected);
     }
 
     @Override
@@ -82,6 +95,7 @@ public class StudentsFragment extends android.support.v4.app.Fragment implements
         Log.v(LOG_TAG, "Inside onCreate of Students Fragment....");
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+
         Bundle arguments = getArguments();
         if (arguments != null) {
             mClassIdStr = arguments.getString(StudentsActivity.CLASS_KEY);
@@ -89,6 +103,8 @@ public class StudentsFragment extends android.support.v4.app.Fragment implements
         }
 
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -102,6 +118,7 @@ public class StudentsFragment extends android.support.v4.app.Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.v(LOG_TAG, "Inside onCreateView of Students Fragment....");
+
         // The ArrayAdapter will take data from a source and
         // use it to populate the ListView it's attached to.
         Bundle arguments = getArguments();
@@ -124,7 +141,7 @@ public class StudentsFragment extends android.support.v4.app.Fragment implements
                 Cursor cursor = mStudentsAdapter.getCursor();
                 if (cursor != null && cursor.moveToPosition(position)) {
                     ((Callback)getActivity())
-                            .onItemSelected(cursor.getString(COL_STUDENT_NAME));
+                            .onItemSelected(cursor.getString(COL_STUDENT_PK_ID));
                 }
                 mPosition = position;
             }
@@ -140,15 +157,19 @@ public class StudentsFragment extends android.support.v4.app.Fragment implements
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
         }
         mStudentsAdapter.setUseSinglePaneLayout(mUseSinglePaneLayout);
+        datePicker = (DatePicker)rootView.findViewById(R.id.date_picker);
+
         return rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(STUDENTS_LOADER, null, this);
+        getLoaderManager().initLoader(ATTENDANCE_LOADER,null,this);
         super.onActivityCreated(savedInstanceState);
     }
 
+  
     @Override
     public void onSaveInstanceState(Bundle outState) {
         // When tablets rotate, the currently selected list item needs to be saved.
@@ -165,20 +186,32 @@ public class StudentsFragment extends android.support.v4.app.Fragment implements
         Log.v(LOG_TAG, "Inside onCreateLoader of Students Fragment FIRST mClassStr " +mClassIdStr);
         // Sort order:  Ascending, by student name.
         String sortOrder = AttendanceContract.StudentEntry.COLUMN_STUDENT_NAME + " ASC";
-
         Uri studentsForClassUri = AttendanceContract.StudentEntry.buildStudentWithClass(
                 mClassIdStr);
         Log.v(LOG_TAG, "Inside onCreateLoader mClassStr " +mClassIdStr);
         // Now create and return a CursorLoader that will take care of
         // creating a Cursor for the data being displayed.
-        return new CursorLoader(
-                getActivity(),
-                studentsForClassUri,
-                STUDENTS_COLUMNS,
-                null,
-                null,
-                sortOrder
-        );
+        Loader<Cursor> studentsForClassLoader =
+        new CursorLoader(getActivity(),studentsForClassUri, STUDENTS_COLUMNS,null,null,sortOrder );
+
+        int day =datePicker.getDayOfMonth();int month = datePicker.getMonth()+1;int year = datePicker.getYear();
+        Log.v(LOG_TAG, " \n Hello123 \n Day :"+day+", \n Month :"+month+ ", \n Year :"+year);
+        StringBuilder builder = new StringBuilder();builder.append(day).append(month).append(year);
+        mDate = builder.toString();
+        builder.setLength(0);
+        Log.v(LOG_TAG,"Date selected is "+ mDate);
+
+        Uri attendanceForClassAndDateUri = AttendanceContract.AttendanceEntry.buildAttendanceWithDateAndClass(mClassIdStr, mDate);
+
+        // Now create and return a CursorLoader that will take care of
+        // creating a Cursor for the data being displayed.
+        Loader<Cursor> attendanceForClassAndDateLoader =
+                new CursorLoader(getActivity(),attendanceForClassAndDateUri,ATTENDANCE_COLUMNS,null,null,null);
+
+        if(attendanceForClassAndDateLoader != null){
+            return attendanceForClassAndDateLoader;
+        }
+        return studentsForClassLoader;
     }
 
     @Override

@@ -6,9 +6,8 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 import android.widget.TextView;
-
-import com.avatar.presentteacher.data.AttendanceContract.StudentEntry;
 
 
 /**
@@ -19,13 +18,13 @@ public class StudentsAdapter extends CursorAdapter {
     // Flag to determine if we want to use a single pane.
     private boolean mSinglePaneLayout = true;
 
-    private static final String[] STUDENTS_FROM_COLUMNS = {
+   /* private static final String[] STUDENTS_FROM_COLUMNS = {
             StudentEntry.COLUMN_STUDENT_NAME,
             StudentEntry.COLUMN_ROLL_NO,
     };
 
 
-    private static final int[] VIEW_ITEMS = {R.id.list_item_student_name_textview,R.id.list_item_roll_no_textview };
+    private static final int[] VIEW_ITEMS = {R.id.list_item_student_name_textview,R.id.list_item_roll_no_textview }; */
 
     /**
      * Cache of the children views for a Student list item.
@@ -34,12 +33,16 @@ public class StudentsAdapter extends CursorAdapter {
 
         public final TextView studentNameView;
         public final TextView rollNoView;
+        public final RadioButton presentRadio;
+        public final RadioButton absentRadio;
 
 
         public ViewHolder(View view) {
 
             studentNameView = (TextView) view.findViewById(R.id.list_item_student_name_textview);
             rollNoView = (TextView) view.findViewById(R.id.list_item_roll_no_textview);
+            presentRadio = (RadioButton)view.findViewById(R.id.radio_button_present);
+            absentRadio = (RadioButton)view.findViewById(R.id.radio_button_absent);
         }
     }
 
@@ -68,10 +71,14 @@ public class StudentsAdapter extends CursorAdapter {
         // Find TextView and set student name on it
         viewHolder.studentNameView.setText(studentNameString);
 
-        // Read subject from cursor
+        // Read roll no. from cursor
         String rollNo = cursor.getString(StudentsFragment.COL_ROLL_NO);
-        // Find TextView and set subject on it
+        // Find TextView and set roll no. on it
         viewHolder.rollNoView.setText(rollNo);
+
+        //Read attendance from cursor
+        String attendance = cursor.getString(StudentsFragment.C)
+
     }
 
     public void setUseSinglePaneLayout(boolean useSinglePane) {

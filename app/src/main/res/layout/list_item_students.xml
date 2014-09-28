@@ -8,16 +8,15 @@
     android:orientation="horizontal">
 
     <LinearLayout
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/list_item_student_name_textview"
-            android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        android:orientation="horizontal">
+        <LinearLayout
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-condensed"
-            android:textSize="20sp"/>
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:padding="5dp">
 
         <TextView
             android:id="@+id/list_item_roll_no_textview"
@@ -25,5 +24,46 @@
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-condensed"
             android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/list_item_student_name_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="20sp"/>
+            </LinearLayout>
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1">
+         <RadioGroup
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/radio_button_absent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/radio_button_absent"
+            android:background="@color/translucent_red"
+            android:layout_marginRight="5dp"
+            android:padding="15dp"/>
+
+        <RadioButton
+            android:id="@+id/radio_button_present"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/radio_button_present"
+            android:background="@color/light_green"
+            android:padding="15dp"/>
+
+         </RadioGroup>
+            </LinearLayout>
+
+
     </LinearLayout>
 </LinearLayout>

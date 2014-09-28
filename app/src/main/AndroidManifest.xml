@@ -36,14 +36,6 @@
             android:name=".CreateStudentActivity"
             android:label="@string/title_activity_create_student" >
         </activity>
-        <activity
-            android:name=".StudActivity"
-            android:label="@string/title_activity_stud"
-            android:parentActivityName=".MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.avatar.presentteacher.MainActivity" />
-        </activity>
     </application>
 
 </manifest>

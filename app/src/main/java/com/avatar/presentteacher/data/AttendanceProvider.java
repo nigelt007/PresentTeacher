@@ -40,7 +40,7 @@ public class AttendanceProvider extends ContentProvider {
                         "." + AttendanceContract.ClassEntry._ID);
     }
 
-    private static final String sLocationSettingAndDaySelection =
+    private static final String sStudentAndDaySelection =
             AttendanceContract.ClassEntry.TABLE_NAME +
                     "." + AttendanceContract.StudentEntry.COLUMN_STUDENT_ID + " = ? AND " +
                     AttendanceContract.AttendanceEntry.COLUMN_DATETEXT + " = ? ";
@@ -50,6 +50,7 @@ public class AttendanceProvider extends ContentProvider {
     private static final int ATTENDANCE_WITH_CLASS = 101;
     private static final int ATTENDANCE_WITH_CLASS_AND_STUDENT = 102;
     private static final int ATTENDANCE_WITH_STUDENT_AND_DATE = 103;
+    private static final int ATTENDANCE_WITH_CLASS_AND_DATE = 104;
     private static final int CLASS = 300;
     private static final int CLASS_ID = 301;
     private static final int STUDENT = 400;
@@ -63,7 +64,7 @@ public class AttendanceProvider extends ContentProvider {
 
         return sAttendanceByDateQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
-                sLocationSettingAndDaySelection,
+                sStudentAndDaySelection,
                 new String[]{student, date},
                 null,
                 null,
@@ -99,14 +100,26 @@ public class AttendanceProvider extends ContentProvider {
             selection =sStudentByClassName;
             selectionArgs=  new String[] {classId};
         }
-        return  sStudentsByClassQueryBuilder.query(mOpenHelper.getReadableDatabase(),
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                sortOrder
-        );
+        return  sStudentsByClassQueryBuilder.query(mOpenHelper.getReadableDatabase(),projection,selection,selectionArgs,null,null,sortOrder);
+    }
+
+    private static final String sAttendanceByClassAndDate = AttendanceContract.AttendanceEntry.TABLE_NAME+
+             "."+ AttendanceContract.AttendanceEntry.COLUMN_CLASS_KEY+"= ? AND " +
+            AttendanceContract.AttendanceEntry.COLUMN_DATETEXT+" = ?";
+
+
+    private Cursor getAttendanceByClassAndDate(Uri uri, String[] projection, String sortOrder){
+        String classId = AttendanceContract.AttendanceEntry.getClassFromUri(uri);
+        String date = AttendanceContract.AttendanceEntry.getDateFromUri(uri);
+        Log.v(LOG_TAG, "Class Id Blah"+classId);
+        Log.v(LOG_TAG, "Date Blah"+date);
+        String[] selectionArgs = new String[0];
+        String selection = null;
+        if(classId != null || date != null){
+            selection = sAttendanceByClassAndDate;
+            selectionArgs = new String[]{classId,date};
+        }
+        return sAttendanceByDateQueryBuilder.query(mOpenHelper.getReadableDatabase(),projection,selection,selectionArgs,null,null,sortOrder);
     }
 
     private static UriMatcher buildUriMatcher() {
@@ -124,6 +137,7 @@ public class AttendanceProvider extends ContentProvider {
         matcher.addURI(authority, AttendanceContract.PATH_ATTENDANCE + "/*", ATTENDANCE_WITH_CLASS);
         matcher.addURI(authority, AttendanceContract.PATH_ATTENDANCE + "/*/*", ATTENDANCE_WITH_CLASS_AND_STUDENT);
         matcher.addURI(authority, AttendanceContract.PATH_ATTENDANCE + "/*/*", ATTENDANCE_WITH_STUDENT_AND_DATE);
+        matcher.addURI(authority, AttendanceContract.PATH_ATTENDANCE + "/*/*", ATTENDANCE_WITH_CLASS_AND_DATE);
 
         matcher.addURI(authority, AttendanceContract.PATH_CLASS, CLASS);
         matcher.addURI(authority, AttendanceContract.PATH_CLASS + "/*", CLASS_ID);
@@ -202,9 +216,13 @@ public class AttendanceProvider extends ContentProvider {
                 break;
             }
 
-
+            case ATTENDANCE_WITH_CLASS_AND_DATE:
+            {
+                retCursor = getAttendanceByClassAndDate(uri,projection,sortOrder);
+                break;
+            }
             default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
+                throw new UnsupportedOperationException(" \n \n Ha hah ha... Unknown uri: " + uri);
         }
         retCursor.setNotificationUri(getContext().getContentResolver(), uri);
         return retCursor;
@@ -215,6 +233,8 @@ public class AttendanceProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
 
         switch (match) {
+            case ATTENDANCE_WITH_CLASS_AND_DATE:
+                return AttendanceContract.AttendanceEntry.CONTENT_ITEM_TYPE;
             case ATTENDANCE_WITH_STUDENT_AND_DATE:
                 return AttendanceContract.AttendanceEntry.CONTENT_ITEM_TYPE;
             case ATTENDANCE_WITH_CLASS_AND_STUDENT:

@@ -71,12 +71,19 @@ public class AttendanceContract {
                     .appendPath( Long.toString(classId)).appendPath(dateText).build();
         }
 
+        public static Uri buildAttendanceWithDateAndClass (String classId, String dateText){
+            return CONTENT_URI.buildUpon().appendPath( classId).appendPath(dateText).build();
+        }
+
         public static String getStudentFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
         }
 
         public static String getDateFromUri(Uri uri) {
             return uri.getPathSegments().get(3);
+        }
+        public static String getClassFromUri(Uri uri){
+            return uri.getPathSegments().get(2);
         }
     }
 

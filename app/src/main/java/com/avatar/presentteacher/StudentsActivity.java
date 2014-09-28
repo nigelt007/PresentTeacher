@@ -6,21 +6,28 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.DatePicker;
 
 
-
-public class StudentsActivity extends ActionBarActivity {
+public class StudentsActivity extends ActionBarActivity implements StudentsFragment.Callback {
 
     private static final String LOG_TAG = StudentsActivity.class.getSimpleName();
     private boolean mTwoPane;
 
     public static final String CLASS_KEY = "class_id";
+    public static final String STUDENT_KEY = "student_id";
     public static String studentClassId;
+    public DatePicker datePicker = null;
+    private int day;
+    private int month;
+    private int year;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(LOG_TAG, "Inside onCreate of StudentsActivity ....");
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_students);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -57,6 +64,12 @@ public class StudentsActivity extends ActionBarActivity {
         StudentsFragment studentsFragment =  ((StudentsFragment)getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_students));
         studentsFragment.setUseSinglePaneLayout(!mTwoPane);
+        String dateString = Utility.getCurrentDate();
+        int[] dateInt = Utility.stringToIntDateFormatter(dateString);
+        day = dateInt[0];month = dateInt[1];year = dateInt[2];
+        Log.v(LOG_TAG, "Today's Date : "+dateString);
+        datePicker =(DatePicker) this.findViewById(R.id.date_picker);
+        //datePicker.init(dateInt[2],dateInt[1],dateInt[0], null);
     }
 
 
@@ -85,4 +98,17 @@ public class StudentsActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-}
+    @Override
+    public void onItemSelected(String studentSelected) {
+
+        Log.v(LOG_TAG, "Inside onItemSelected");
+
+        Intent intent = new Intent(this, StudentsActivity.class)
+                .putExtra(StudentsActivity.STUDENT_KEY, studentSelected);
+        Log.d(LOG_TAG, "Student Selected "+studentSelected);
+
+
+
+    }
+
+    }

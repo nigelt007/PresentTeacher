@@ -40,7 +40,7 @@ public class MainActivity extends ActionBarActivity implements ClassFragment.Cal
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_add_class) {
+        if (id == R.id.action_add_class_id) {
             startActivity(new Intent(this, NewClassActivity.class));
             return true;
         }
